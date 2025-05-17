@@ -22,17 +22,17 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   progress,
 }) => {
   return (
-    <Link to={`/anime/${id}`}>
-      <div className="anime-card group">
-        <div className="relative h-full">
+    <Link to={`/anime/${id}`} className="block">
+      <div className="group overflow-hidden rounded-xl transition-all duration-200 hover:shadow-lg">
+        <div className="relative aspect-[2/3]">
           <img
             src={image}
             alt={title}
-            className="anime-card-image"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           
-          <div className="anime-card-overlay">
-            <h3 className="font-semibold text-sm md:text-base line-clamp-2 mb-1">{title}</h3>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-4 flex flex-col justify-end">
+            <h3 className="font-semibold text-sm md:text-base text-white line-clamp-2 mb-1">{title}</h3>
             
             <div className="flex items-center justify-between text-xs">
               <div className="flex gap-2 items-center">
