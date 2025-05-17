@@ -1,6 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { Video } from "lucide-react";
 
 interface AnimeCardProps {
   id: number;
@@ -49,9 +50,10 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
               </div>
               
               {episodes && (
-                <span className="text-gray-300 text-xs">
+                <div className="flex items-center text-gray-300 text-xs">
+                  <Video className="mr-1" size={12} />
                   {progress !== undefined ? `${progress}/${episodes}` : `${episodes} eps`}
-                </span>
+                </div>
               )}
             </div>
           </div>

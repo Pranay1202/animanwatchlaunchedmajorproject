@@ -66,6 +66,46 @@ const animeData: Anime[] = [
     type: "TV",
     episodes: 37,
   },
+  {
+    id: 7,
+    title: "Demon Slayer",
+    image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
+    rating: 9.0,
+    type: "TV",
+    episodes: 24,
+  },
+  {
+    id: 8,
+    title: "Attack on Titan",
+    image: "https://images.unsplash.com/photo-1541562232579-512a21360020?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
+    rating: 9.2,
+    type: "TV",
+    episodes: 75,
+  },
+  {
+    id: 9,
+    title: "Tokyo Ghoul",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
+    rating: 8.0,
+    type: "TV",
+    episodes: 12,
+  },
+  {
+    id: 10,
+    title: "Sword Art Online",
+    image: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
+    rating: 7.5,
+    type: "TV",
+    episodes: 25,
+  },
+  {
+    id: 11,
+    title: "Your Lie in April",
+    image: "https://images.unsplash.com/photo-1500673922987-e212871fec22?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
+    rating: 8.8,
+    type: "TV",
+    episodes: 22,
+  },
 ];
 
 const FeaturedAnime: React.FC<FeaturedAnimeProps> = ({ title, animes = animeData }) => {
