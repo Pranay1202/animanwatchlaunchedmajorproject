@@ -50,7 +50,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
               
               {episodes && (
                 <span className="text-gray-300 text-xs">
-                  {progress ? `${progress}/${episodes}` : `${episodes} eps`}
+                  {progress !== undefined ? `${progress}/${episodes}` : `${episodes} eps`}
                 </span>
               )}
             </div>
