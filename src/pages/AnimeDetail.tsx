@@ -1,12 +1,13 @@
-
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Video, Calendar, Film } from "lucide-react";
+import VideoPlayer from "@/components/VideoPlayer";
+import EpisodeCard from "@/components/EpisodeCard";
 
-// Enhanced anime data with more entries and episodes
+// Enhanced anime data with more entries and episodes and actual video sources
 const animeData = [
   {
     id: 1,
@@ -17,11 +18,31 @@ const animeData = [
     episodes: 24,
     synopsis: "A young boy hunts demons to avenge his family and cure his sister.",
     videos: [
-      { title: "Episode 1 - Cruelty", url: "https://example.com/video1" },
-      { title: "Episode 2 - Trainer Sakonji Urokodaki", url: "https://example.com/video2" },
-      { title: "Episode 3 - Sabito and Makomo", url: "https://example.com/video3" },
-      { title: "Episode 4 - Final Selection", url: "https://example.com/video4" },
-      { title: "Episode 5 - My Own Steel", url: "https://example.com/video5" },
+      { 
+        title: "Episode 1 - Cruelty", 
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1578632767115-351597cf2477?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=400" 
+      },
+      { 
+        title: "Episode 2 - Trainer Sakonji Urokodaki", 
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1578632767115-351597cf2477?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=400" 
+      },
+      { 
+        title: "Episode 3 - Sabito and Makomo", 
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1578632767115-351597cf2477?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=400" 
+      },
+      { 
+        title: "Episode 4 - Final Selection", 
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1578632767115-351597cf2477?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=400" 
+      },
+      { 
+        title: "Episode 5 - My Own Steel", 
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1578632767115-351597cf2477?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=400" 
+      },
     ]
   },
   {
@@ -33,11 +54,31 @@ const animeData = [
     episodes: 24,
     synopsis: "A high school student joins a secret organization to fight curses.",
     videos: [
-      { title: "Episode 1 - Ryomen Sukuna", url: "https://example.com/jjk1" },
-      { title: "Episode 2 - For Myself", url: "https://example.com/jjk2" },
-      { title: "Episode 3 - Girl of Steel", url: "https://example.com/jjk3" },
-      { title: "Episode 4 - Curse Womb Must Die", url: "https://example.com/jjk4" },
-      { title: "Episode 5 - Curse", url: "https://example.com/jjk5" },
+      { 
+        title: "Episode 1 - Ryomen Sukuna", 
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1601850494422-3cf14624b0b3?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=400" 
+      },
+      { 
+        title: "Episode 2 - For Myself", 
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1601850494422-3cf14624b0b3?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=400" 
+      },
+      { 
+        title: "Episode 3 - Girl of Steel", 
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1601850494422-3cf14624b0b3?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=400" 
+      },
+      { 
+        title: "Episode 4 - Curse Womb Must Die", 
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1601850494422-3cf14624b0b3?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=400" 
+      },
+      { 
+        title: "Episode 5 - Curse", 
+        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1601850494422-3cf14624b0b3?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=400" 
+      },
     ]
   },
   {
@@ -269,6 +310,7 @@ const animeData = [
 const AnimeDetail = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("episodes");
+  const [selectedVideo, setSelectedVideo] = useState<{ title: string; url: string } | null>(null);
   
   // Find anime by id from our sample data
   const anime = animeData.find(anime => anime.id === Number(id));
@@ -283,6 +325,16 @@ const AnimeDetail = () => {
       </div>
     );
   }
+
+  // Handle opening the video player
+  const handleWatchVideo = (video: { title: string; url: string }) => {
+    setSelectedVideo(video);
+  };
+
+  // Handle closing the video player
+  const handleCloseVideo = () => {
+    setSelectedVideo(null);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -358,18 +410,12 @@ const AnimeDetail = () => {
               <h3 className="text-xl font-semibold">Watch Episodes</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {anime.videos.map((video, index) => (
-                  <div key={index} className="border rounded-lg p-4 hover:bg-accent transition-colors">
-                    <h4 className="font-medium mb-2">{video.title}</h4>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full"
-                      onClick={() => window.open(video.url, '_blank')}
-                    >
-                      <Video className="mr-2" size={16} />
-                      Watch Now
-                    </Button>
-                  </div>
+                  <EpisodeCard
+                    key={index}
+                    title={video.title}
+                    thumbnail={video.thumbnail}
+                    onWatch={() => handleWatchVideo(video)}
+                  />
                 ))}
               </div>
             </div>
@@ -390,6 +436,16 @@ const AnimeDetail = () => {
           )}
         </div>
       </main>
+
+      {/* Video Player Modal */}
+      {selectedVideo && (
+        <VideoPlayer
+          isOpen={!!selectedVideo}
+          onClose={handleCloseVideo}
+          title={selectedVideo.title}
+          videoSrc={selectedVideo.url}
+        />
+      )}
     </div>
   );
 };
