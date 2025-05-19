@@ -13,6 +13,12 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { Google, Mail, Phone, Loader } from "lucide-react";
+import { 
+  InputOTP, 
+  InputOTPGroup, 
+  InputOTPSlot 
+} from "@/components/ui/input-otp";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -24,20 +30,97 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showVerification, setShowVerification] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
   const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // In a real app, you would connect to your auth provider here
-    toast({
-      title: "Login Attempted",
-      description: `Attempted login with ${loginMethod}: ${loginMethod === "email" ? email : phone}`,
-      duration: 3000,
-    });
+    setTimeout(() => {
+      // In a real app, you would connect to your auth provider here
+      toast({
+        title: "Login Attempted",
+        description: `Attempted login with ${loginMethod}: ${loginMethod === "email" ? email : phone}`,
+        duration: 3000,
+      });
+      
+      setIsLoading(false);
+      // Close the modal after login attempt
+      setIsOpen(false);
+    }, 1500);
+  };
+
+  const handleGoogleLogin = () => {
+    setIsLoading(true);
     
-    // Close the modal after login attempt
-    setIsOpen(false);
+    setTimeout(() => {
+      // In a real app, you would connect to Google Auth here
+      toast({
+        title: "Google Login Attempted",
+        description: "Attempted login with Google",
+        duration: 3000,
+      });
+      
+      setIsLoading(false);
+      setIsOpen(false);
+    }, 1500);
+  };
+
+  const handlePhoneLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    if (!phone.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid phone number",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    setTimeout(() => {
+      // In a real app, you would request a verification code here
+      toast({
+        title: "Verification Code Sent",
+        description: `A verification code was sent to ${phone}`,
+        duration: 3000,
+      });
+      
+      setIsLoading(false);
+      // Show verification code input
+      setShowVerification(true);
+    }, 1500);
+  };
+
+  const handleVerifyCode = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    setTimeout(() => {
+      // In a real app, you would verify the code here
+      if (verificationCode.length === 6) {
+        toast({
+          title: "Phone Number Verified",
+          description: "You have successfully logged in",
+          duration: 3000,
+        });
+        setIsOpen(false);
+      } else {
+        toast({
+          title: "Invalid Code",
+          description: "Please enter a valid verification code",
+          variant: "destructive",
+          duration: 3000,
+        });
+      }
+      
+      setIsLoading(false);
+    }, 1500);
   };
 
   return (
@@ -57,111 +140,262 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
           </TabsList>
           
           <TabsContent value="login" className="mt-4">
-            <form onSubmit={handleLogin}>
-              <div className="flex justify-center mb-4">
-                <div className="flex rounded-md overflow-hidden border">
-                  <Button 
-                    type="button"
-                    variant={loginMethod === "email" ? "default" : "ghost"}
-                    className={`rounded-none ${loginMethod === "email" ? "bg-anime-purple" : ""}`}
-                    onClick={() => setLoginMethod("email")}
-                  >
-                    Email
-                  </Button>
-                  <Button 
-                    type="button"
-                    variant={loginMethod === "phone" ? "default" : "ghost"}
-                    className={`rounded-none ${loginMethod === "phone" ? "bg-anime-purple" : ""}`}
-                    onClick={() => setLoginMethod("phone")}
-                  >
-                    Phone
-                  </Button>
+            <div className="flex flex-col gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2"
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
+              >
+                {isLoading && <Loader size={16} className="animate-spin" />}
+                <Google size={16} />
+                Sign In with Google
+              </Button>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Or continue with
+                  </span>
                 </div>
               </div>
-              
-              <div className="grid gap-4">
-                {loginMethod === "email" ? (
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
+
+              {!showVerification ? (
+                <>
+                  <div className="flex justify-center mb-4">
+                    <div className="flex rounded-md overflow-hidden border">
+                      <Button 
+                        type="button"
+                        variant={loginMethod === "email" ? "default" : "ghost"}
+                        className={`rounded-none ${loginMethod === "email" ? "bg-anime-purple" : ""}`}
+                        onClick={() => setLoginMethod("email")}
+                      >
+                        <Mail className="h-4 w-4 mr-2" />
+                        Email
+                      </Button>
+                      <Button 
+                        type="button"
+                        variant={loginMethod === "phone" ? "default" : "ghost"}
+                        className={`rounded-none ${loginMethod === "phone" ? "bg-anime-purple" : ""}`}
+                        onClick={() => setLoginMethod("phone")}
+                      >
+                        <Phone className="h-4 w-4 mr-2" />
+                        Phone
+                      </Button>
+                    </div>
                   </div>
-                ) : (
-                  <div className="grid gap-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+1 (555) 123-4567"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      required
-                    />
+                  
+                  {loginMethod === "email" ? (
+                    <form onSubmit={handleLogin}>
+                      <div className="grid gap-4">
+                        <div className="grid gap-2">
+                          <Label htmlFor="email">Email</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                          />
+                        </div>
+                        
+                        <div className="grid gap-2">
+                          <Label htmlFor="password">Password</Label>
+                          <Input
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                          />
+                        </div>
+                      </div>
+                      
+                      <DialogFooter className="mt-6">
+                        <Button 
+                          type="submit" 
+                          className="w-full bg-anime-purple hover:bg-anime-darkpurple"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <>
+                              <Loader size={16} className="mr-2 animate-spin" />
+                              Signing In...
+                            </>
+                          ) : (
+                            "Sign In"
+                          )}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  ) : (
+                    <form onSubmit={handlePhoneLogin}>
+                      <div className="grid gap-4">
+                        <div className="grid gap-2">
+                          <Label htmlFor="phone">Phone Number</Label>
+                          <Input
+                            id="phone"
+                            type="tel"
+                            placeholder="+1 (555) 123-4567"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            required
+                          />
+                        </div>
+                      </div>
+                      
+                      <DialogFooter className="mt-6">
+                        <Button 
+                          type="submit" 
+                          className="w-full bg-anime-purple hover:bg-anime-darkpurple"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <>
+                              <Loader size={16} className="mr-2 animate-spin" />
+                              Sending Code...
+                            </>
+                          ) : (
+                            "Send Verification Code"
+                          )}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  )}
+                </>
+              ) : (
+                <form onSubmit={handleVerifyCode} className="mt-4">
+                  <div className="grid gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="verification-code">Verification Code</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Enter the 6-digit code sent to your phone number
+                      </p>
+                      
+                      <div className="flex justify-center my-4">
+                        <InputOTP
+                          maxLength={6}
+                          value={verificationCode}
+                          onChange={(value) => setVerificationCode(value)}
+                          render={({ slots }) => (
+                            <InputOTPGroup>
+                              {slots.map((slot, index) => (
+                                <InputOTPSlot key={index} index={index} {...slot} />
+                              ))}
+                            </InputOTPGroup>
+                          )}
+                        />
+                      </div>
+                      
+                      <Button
+                        type="button"
+                        variant="link"
+                        className="text-sm"
+                        onClick={() => setShowVerification(false)}
+                      >
+                        Use a different phone number
+                      </Button>
+                    </div>
                   </div>
-                )}
-                
-                <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <DialogFooter className="mt-6">
-                <Button type="submit" className="w-full bg-anime-purple hover:bg-anime-darkpurple">
-                  Sign In
-                </Button>
-              </DialogFooter>
-            </form>
+                  
+                  <DialogFooter className="mt-6">
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-anime-purple hover:bg-anime-darkpurple"
+                      disabled={isLoading || verificationCode.length !== 6}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader size={16} className="mr-2 animate-spin" />
+                          Verifying...
+                        </>
+                      ) : (
+                        "Verify and Sign In"
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              )}
+            </div>
           </TabsContent>
           
           <TabsContent value="signup" className="mt-4">
-            <form onSubmit={handleLogin}>
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="you@example.com"
-                    required
-                  />
+            <div className="flex flex-col gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2"
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
+              >
+                {isLoading && <Loader size={16} className="animate-spin" />}
+                <Google size={16} />
+                Sign Up with Google
+              </Button>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    required
-                  />
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Or continue with
+                  </span>
                 </div>
               </div>
               
-              <DialogFooter className="mt-6">
-                <Button type="submit" className="w-full bg-anime-purple hover:bg-anime-darkpurple">
-                  Create Account
-                </Button>
-              </DialogFooter>
-            </form>
+              <form onSubmit={handleLogin}>
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="signup-email">Email</Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="signup-password">Password</Label>
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="confirm-password">Confirm Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <DialogFooter className="mt-6">
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-anime-purple hover:bg-anime-darkpurple"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader size={16} className="mr-2 animate-spin" />
+                        Creating Account...
+                      </>
+                    ) : (
+                      "Create Account"
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </div>
           </TabsContent>
         </Tabs>
         
