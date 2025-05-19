@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Google, Mail, Phone, Loader } from "lucide-react";
+import { Mail, Phone, Loader } from "lucide-react";
 import { 
   InputOTP, 
   InputOTPGroup, 
@@ -149,7 +149,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
                 disabled={isLoading}
               >
                 {isLoading && <Loader size={16} className="animate-spin" />}
-                <Google size={16} />
+                <Mail size={16} className="text-red-500" />
                 Sign In with Google
               </Button>
 
@@ -334,7 +334,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
                 disabled={isLoading}
               >
                 {isLoading && <Loader size={16} className="animate-spin" />}
-                <Google size={16} />
+                <Mail size={16} className="text-red-500" />
                 Sign Up with Google
               </Button>
 
