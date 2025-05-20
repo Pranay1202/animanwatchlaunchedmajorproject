@@ -102,12 +102,15 @@ const Navbar = () => {
                   <Avatar className="h-8 w-8 cursor-pointer">
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-anime-purple text-white">
-                      {user?.name ? getInitials(user.name) : 'U'}
+                      {user?.name ? getInitials(user.name) : user?.email?.charAt(0).toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel className="text-xs font-normal text-muted-foreground truncate">
+                    {user?.email}
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <Link to="/profile" className="w-full">Profile</Link>

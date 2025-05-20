@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Mail, Phone, Loader } from "lucide-react";
+import { Mail, Phone, Loader, Lock } from "lucide-react";
 import { 
   InputOTP, 
   InputOTPGroup, 
@@ -31,10 +31,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
   const [showVerification, setShowVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const { toast } = useToast();
-  const { login, sendOTP, verifyOTP, isLoading } = useAuth();
+  const { login, register, sendOTP, verifyOTP, isLoading } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,14 +60,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
       // Error is already handled in the useAuth hook
       console.error("Login failed:", error);
     }
-  };
-
-  const handleGoogleLogin = () => {
-    toast({
-      title: "Google Login",
-      description: "Google authentication is not implemented in this demo",
-      duration: 3000,
-    });
   };
 
   const handlePhoneLogin = async (e: React.FormEvent) => {
@@ -120,11 +114,35 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    toast({
-      title: "Signup",
-      description: "Signup functionality is not fully implemented in this demo. Try signing in with user@example.com / password123",
-      duration: 5000,
-    });
+    if (!email || !password || !confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      await register(email, password, name || undefined);
+      setIsOpen(false);
+      // Reset form
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setName("");
+    } catch (error) {
+      console.error("Signup failed:", error);
+    }
   };
 
   return (
@@ -145,29 +163,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
           
           <TabsContent value="login" className="mt-4">
             <div className="flex flex-col gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2"
-                onClick={handleGoogleLogin}
-                disabled={isLoading}
-              >
-                {isLoading && <Loader size={16} className="animate-spin" />}
-                <Mail size={16} className="text-red-500" />
-                Sign In with Google
-              </Button>
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-
               {!showVerification ? (
                 <>
                   <div className="flex justify-center mb-4">
@@ -206,9 +201,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                           />
-                          <p className="text-sm text-muted-foreground">
-                            Demo email: user@example.com
-                          </p>
                         </div>
                         
                         <div className="grid gap-2">
@@ -220,9 +212,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                           />
-                          <p className="text-sm text-muted-foreground">
-                            Demo password: password123
-                          </p>
                         </div>
                       </div>
                       
@@ -340,37 +329,26 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
           
           <TabsContent value="signup" className="mt-4">
             <div className="flex flex-col gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2"
-                onClick={handleGoogleLogin}
-                disabled={isLoading}
-              >
-                {isLoading && <Loader size={16} className="animate-spin" />}
-                <Mail size={16} className="text-red-500" />
-                Sign Up with Google
-              </Button>
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-              
               <form onSubmit={handleSignup}>
                 <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="signup-name">Name (Optional)</Label>
+                    <Input
+                      id="signup-name"
+                      type="text"
+                      placeholder="Your name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
                   <div className="grid gap-2">
                     <Label htmlFor="signup-email">Email</Label>
                     <Input
                       id="signup-email"
                       type="email"
                       placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>
@@ -379,6 +357,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
                     <Input
                       id="signup-password"
                       type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
                     />
                   </div>
@@ -387,6 +367,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
                     <Input
                       id="confirm-password"
                       type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                       required
                     />
                   </div>
