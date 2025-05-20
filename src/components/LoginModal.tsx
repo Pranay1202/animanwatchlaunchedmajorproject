@@ -19,6 +19,7 @@ import {
   InputOTPGroup, 
   InputOTPSlot 
 } from "@/components/ui/input-otp";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -30,48 +31,45 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const { toast } = useToast();
+  const { login, sendOTP, verifyOTP, isLoading } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
-    setTimeout(() => {
-      // In a real app, you would connect to your auth provider here
+    if (!email || !password) {
       toast({
-        title: "Login Attempted",
-        description: `Attempted login with ${loginMethod}: ${loginMethod === "email" ? email : phone}`,
-        duration: 3000,
+        title: "Error",
+        description: "Please enter both email and password",
+        variant: "destructive"
       });
-      
-      setIsLoading(false);
-      // Close the modal after login attempt
+      return;
+    }
+    
+    try {
+      await login(email, password);
       setIsOpen(false);
-    }, 1500);
+      // Reset form
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      // Error is already handled in the useAuth hook
+      console.error("Login failed:", error);
+    }
   };
 
   const handleGoogleLogin = () => {
-    setIsLoading(true);
-    
-    setTimeout(() => {
-      // In a real app, you would connect to Google Auth here
-      toast({
-        title: "Google Login Attempted",
-        description: "Attempted login with Google",
-        duration: 3000,
-      });
-      
-      setIsLoading(false);
-      setIsOpen(false);
-    }, 1500);
+    toast({
+      title: "Google Login",
+      description: "Google authentication is not implemented in this demo",
+      duration: 3000,
+    });
   };
 
-  const handlePhoneLogin = (e: React.FormEvent) => {
+  const handlePhoneLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
     if (!phone.trim()) {
       toast({
@@ -79,48 +77,54 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
         description: "Please enter a valid phone number",
         variant: "destructive"
       });
-      setIsLoading(false);
       return;
     }
-
-    setTimeout(() => {
-      // In a real app, you would request a verification code here
-      toast({
-        title: "Verification Code Sent",
-        description: `A verification code was sent to ${phone}`,
-        duration: 3000,
-      });
-      
-      setIsLoading(false);
-      // Show verification code input
+    
+    // For demo purposes, we'll just accept any phone number format
+    // and use email OTP flow with a dummy email
+    const dummyEmail = `${phone.replace(/\D/g, '')}@phone.demo`;
+    setEmail(dummyEmail);
+    
+    try {
+      await sendOTP(dummyEmail);
       setShowVerification(true);
-    }, 1500);
+    } catch (error) {
+      console.error("Phone verification failed:", error);
+    }
   };
 
-  const handleVerifyCode = (e: React.FormEvent) => {
+  const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
-    setTimeout(() => {
-      // In a real app, you would verify the code here
-      if (verificationCode.length === 6) {
-        toast({
-          title: "Phone Number Verified",
-          description: "You have successfully logged in",
-          duration: 3000,
-        });
-        setIsOpen(false);
-      } else {
-        toast({
-          title: "Invalid Code",
-          description: "Please enter a valid verification code",
-          variant: "destructive",
-          duration: 3000,
-        });
-      }
-      
-      setIsLoading(false);
-    }, 1500);
+    if (verificationCode.length !== 6) {
+      toast({
+        title: "Invalid Code",
+        description: "Please enter a valid 6-digit verification code",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      await verifyOTP(email, verificationCode);
+      setIsOpen(false);
+      // Reset form
+      setEmail("");
+      setVerificationCode("");
+      setShowVerification(false);
+    } catch (error) {
+      console.error("OTP verification failed:", error);
+    }
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    toast({
+      title: "Signup",
+      description: "Signup functionality is not fully implemented in this demo. Try signing in with user@example.com / password123",
+      duration: 5000,
+    });
   };
 
   return (
@@ -202,6 +206,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                           />
+                          <p className="text-sm text-muted-foreground">
+                            Demo email: user@example.com
+                          </p>
                         </div>
                         
                         <div className="grid gap-2">
@@ -213,6 +220,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                           />
+                          <p className="text-sm text-muted-foreground">
+                            Demo password: password123
+                          </p>
                         </div>
                       </div>
                       
@@ -292,6 +302,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
                         />
                       </div>
                       
+                      <p className="text-sm text-muted-foreground text-center">
+                        For demo purposes, use code: 123456
+                      </p>
+                      
                       <Button
                         type="button"
                         variant="link"
@@ -349,7 +363,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
                 </div>
               </div>
               
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleSignup}>
                 <div className="grid gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="signup-email">Email</Label>

@@ -12,9 +12,29 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
+import { useAuth } from "@/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const { user, logout, isAuthenticated } = useAuth();
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <div className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b">
@@ -69,21 +89,58 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="hidden sm:flex"
-            onClick={() => setIsLoginModalOpen(true)}
-          >
-            Sign In
-          </Button>
-          <Button
-            size="sm"
-            className="bg-anime-purple hover:bg-anime-darkpurple"
-            onClick={() => setIsLoginModalOpen(true)}
-          >
-            Sign Up
-          </Button>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-4">
+              <Link to="/watchlist">
+                <Button variant="outline" size="sm">
+                  My Watchlist
+                </Button>
+              </Link>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="h-8 w-8 cursor-pointer">
+                    <AvatarImage src="" />
+                    <AvatarFallback className="bg-anime-purple text-white">
+                      {user?.name ? getInitials(user.name) : 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link to="/profile" className="w-full">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link to="/settings" className="w-full">Settings</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout}>
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden sm:flex"
+                onClick={() => setIsLoginModalOpen(true)}
+              >
+                Sign In
+              </Button>
+              <Button
+                size="sm"
+                className="bg-anime-purple hover:bg-anime-darkpurple"
+                onClick={() => setIsLoginModalOpen(true)}
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
         </div>
       </div>
       <LoginModal isOpen={isLoginModalOpen} setIsOpen={setIsLoginModalOpen} />
