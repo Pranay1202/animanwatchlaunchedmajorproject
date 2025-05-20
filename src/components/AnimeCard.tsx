@@ -1,7 +1,8 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Video } from "lucide-react";
+import { Video, Bookmark } from "lucide-react";
+import { useWatchlist } from "@/contexts/WatchlistContext";
 
 interface AnimeCardProps {
   id: number;
@@ -22,10 +23,20 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
   episodes,
   progress,
 }) => {
+  const { isInWatchlist } = useWatchlist();
+  const inWatchlist = isInWatchlist(id);
+  
   return (
     <Link to={`/anime/${id}`} className="block">
       <div className="group overflow-hidden rounded-xl transition-all duration-200 hover:shadow-lg">
         <div className="relative aspect-[2/3]">
+          {/* Watchlist indicator */}
+          {inWatchlist && (
+            <div className="absolute top-2 right-2 z-10 bg-anime-purple rounded-full p-1">
+              <Bookmark size={16} className="text-white" />
+            </div>
+          )}
+          
           <img
             src={image}
             alt={title}

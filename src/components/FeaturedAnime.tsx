@@ -1,6 +1,7 @@
 
 import AnimeCard from "./AnimeCard";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Link } from "react-router-dom";
 
 interface Anime {
   id: number;
@@ -15,108 +16,22 @@ interface Anime {
 interface FeaturedAnimeProps {
   title: string;
   animes: Anime[];
+  viewAllLink?: string;
 }
 
-const animeData: Anime[] = [
-  {
-    id: 1,
-    title: "One Piece",
-    image: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 9.2,
-    type: "TV",
-    episodes: 1064,
-  },
-  {
-    id: 2,
-    title: "Jujutsu Kaisen",
-    image: "https://images.unsplash.com/photo-1601850494422-3cf14624b0b3?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 8.8,
-    type: "TV",
-    episodes: 24,
-  },
-  {
-    id: 3,
-    title: "Chainsaw Man",
-    image: "https://images.unsplash.com/photo-1571757767119-68b8dbed8c97?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 8.7,
-    type: "TV",
-    episodes: 12,
-  },
-  {
-    id: 4,
-    title: "Fullmetal Alchemist: Brotherhood",
-    image: "https://images.unsplash.com/photo-1612178537253-bccd437b730e?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 9.1,
-    type: "TV",
-    episodes: 64,
-  },
-  {
-    id: 5,
-    title: "Hunter x Hunter",
-    image: "https://images.unsplash.com/photo-1530319067432-f2a729c03db5?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 9.0,
-    type: "TV",
-    episodes: 148,
-  },
-  {
-    id: 6,
-    title: "Death Note",
-    image: "https://images.unsplash.com/photo-1603794067602-9feaa4f70e0c?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 8.6,
-    type: "TV",
-    episodes: 37,
-  },
-  {
-    id: 7,
-    title: "Demon Slayer",
-    image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 9.0,
-    type: "TV",
-    episodes: 24,
-  },
-  {
-    id: 8,
-    title: "Attack on Titan",
-    image: "https://images.unsplash.com/photo-1541562232579-512a21360020?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 9.2,
-    type: "TV",
-    episodes: 75,
-  },
-  {
-    id: 9,
-    title: "Tokyo Ghoul",
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 8.0,
-    type: "TV",
-    episodes: 12,
-  },
-  {
-    id: 10,
-    title: "Sword Art Online",
-    image: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 7.5,
-    type: "TV",
-    episodes: 25,
-  },
-  {
-    id: 11,
-    title: "Your Lie in April",
-    image: "https://images.unsplash.com/photo-1500673922987-e212871fec22?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 8.8,
-    type: "TV",
-    episodes: 22,
-  },
-];
-
-const FeaturedAnime: React.FC<FeaturedAnimeProps> = ({ title, animes = animeData }) => {
+const FeaturedAnime: React.FC<FeaturedAnimeProps> = ({ 
+  title, 
+  animes, 
+  viewAllLink = "/anime-list" 
+}) => {
   return (
     <div className="py-8">
       <div className="container">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">{title}</h2>
-          <a href="#" className="text-anime-purple hover:underline text-sm">
+          <Link to={viewAllLink} className="text-anime-purple hover:underline text-sm">
             View all
-          </a>
+          </Link>
         </div>
         
         <ScrollArea className="w-full whitespace-nowrap">

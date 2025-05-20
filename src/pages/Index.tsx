@@ -4,99 +4,42 @@ import Navbar from "@/components/Navbar";
 import FeaturedAnime from "@/components/FeaturedAnime";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { animeData } from "@/data/animeData";
 
-// Sample anime data for different categories
-const trending = [
-  {
-    id: 1,
-    title: "Demon Slayer: Kimetsu no Yaiba",
-    image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 9.0,
-    type: "TV",
-    episodes: 24,
-  },
-  {
-    id: 2,
-    title: "Jujutsu Kaisen",
-    image: "https://images.unsplash.com/photo-1601850494422-3cf14624b0b3?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 8.8,
-    type: "TV",
-    episodes: 24,
-  },
-  {
-    id: 3,
-    title: "Attack on Titan",
-    image: "https://images.unsplash.com/photo-1541562232579-512a21360020?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 9.2,
-    type: "TV",
-    episodes: 75,
-  },
-  {
-    id: 4,
-    title: "My Hero Academia",
-    image: "https://images.unsplash.com/photo-1560707303-4e980ce876ad?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 8.5,
-    type: "TV",
-    episodes: 113,
-  },
-  {
-    id: 5,
-    title: "One Punch Man",
-    image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 8.7,
-    type: "TV",
-    episodes: 24,
-  },
-];
+// Get unique genres from anime data
+const allGenres = Array.from(
+  new Set(animeData.flatMap((anime) => anime.genres))
+).slice(0, 8);
 
-const popular = [
-  {
-    id: 6,
-    title: "Naruto: Shippuden",
-    image: "https://images.unsplash.com/photo-1614583225154-5fcdda07019e?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 8.6,
-    type: "TV",
-    episodes: 500,
-  },
-  {
-    id: 7,
-    title: "One Piece",
-    image: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 9.2,
-    type: "TV",
-    episodes: 1064,
-  },
-  {
-    id: 8,
-    title: "Death Note",
-    image: "https://images.unsplash.com/photo-1603794067602-9feaa4f70e0c?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 8.6,
-    type: "TV",
-    episodes: 37,
-  },
-  {
-    id: 9,
-    title: "Fullmetal Alchemist: Brotherhood",
-    image: "https://images.unsplash.com/photo-1612178537253-bccd437b730e?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 9.1,
-    type: "TV",
-    episodes: 64,
-  },
-  {
-    id: 10,
-    title: "Hunter x Hunter",
-    image: "https://images.unsplash.com/photo-1530319067432-f2a729c03db5?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800",
-    rating: 9.0,
-    type: "TV",
-    episodes: 148,
-  },
-];
+// Sort anime by rating for trending and most popular sections
+const trending = animeData
+  .slice()
+  .sort((a, b) => b.rating - a.rating)
+  .slice(0, 5);
 
+const popular = animeData
+  .slice()
+  .sort((a, b) => b.year - a.year)
+  .slice(0, 5);
+
+// Select a few popular genres with some anime to display
 const categories = [
-  { name: "Action", image: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800" },
-  { name: "Fantasy", image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800" },
-  { name: "Romance", image: "https://images.unsplash.com/photo-1516589091380-5d8e87df6999?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800" },
-  { name: "Comedy", image: "https://images.unsplash.com/photo-1543584756-31dc84f636d7?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800" },
+  { 
+    name: "Action", 
+    image: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800" 
+  },
+  { 
+    name: "Fantasy", 
+    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800" 
+  },
+  { 
+    name: "Romance", 
+    image: "https://images.unsplash.com/photo-1516589091380-5d8e87df6999?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800" 
+  },
+  { 
+    name: "Comedy", 
+    image: "https://images.unsplash.com/photo-1543584756-31dc84f636d7?ixlib=rb-1.2.1&auto=format&fit=crop&q=80&w=800" 
+  },
 ];
 
 const Index = () => {
@@ -113,7 +56,7 @@ const Index = () => {
         <div className="container py-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">Browse by Genre</h2>
-            <Link to="/genres" className="text-anime-purple hover:underline text-sm">
+            <Link to="/anime-list" className="text-anime-purple hover:underline text-sm">
               View all genres
             </Link>
           </div>
@@ -159,9 +102,11 @@ const Index = () => {
             </div>
             
             <div className="mt-12 text-center">
-              <Button size="lg" className="bg-anime-purple hover:bg-anime-darkpurple">
-                Create Your Watchlist
-              </Button>
+              <Link to="/watchlist">
+                <Button size="lg" className="bg-anime-purple hover:bg-anime-darkpurple">
+                  Create Your Watchlist
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -183,8 +128,8 @@ const Index = () => {
             <div>
               <h3 className="font-semibold text-white mb-4">Categories</h3>
               <ul className="space-y-2">
-                <li><Link to="/category/all" className="hover:text-anime-purple">All</Link></li>
-                <li><Link to="/category/watching" className="hover:text-anime-purple">Watching</Link></li>
+                <li><Link to="/anime-list" className="hover:text-anime-purple">All</Link></li>
+                <li><Link to="/watchlist" className="hover:text-anime-purple">My Watchlist</Link></li>
                 <li><Link to="/category/completed" className="hover:text-anime-purple">Completed</Link></li>
                 <li><Link to="/category/plan-to-watch" className="hover:text-anime-purple">Plan to Watch</Link></li>
               </ul>
@@ -192,18 +137,22 @@ const Index = () => {
             <div>
               <h3 className="font-semibold text-white mb-4">Resources</h3>
               <ul className="space-y-2">
-                <li><Link to="/help" className="hover:text-anime-purple">Help Center</Link></li>
-                <li><Link to="/about" className="hover:text-anime-purple">About Us</Link></li>
-                <li><Link to="/contact" className="hover:text-anime-purple">Contact</Link></li>
-                <li><Link to="/faq" className="hover:text-anime-purple">FAQ</Link></li>
+                <li><Link to="/resources" className="hover:text-anime-purple">Help Center</Link></li>
+                <li><Link to="/resources" className="hover:text-anime-purple">About Us</Link></li>
+                <li><Link to="/resources" className="hover:text-anime-purple">Contact</Link></li>
+                <li><Link to="/resources" className="hover:text-anime-purple">FAQ</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-white mb-4">Legal</h3>
+              <h3 className="font-semibold text-white mb-4">Genres</h3>
               <ul className="space-y-2">
-                <li><Link to="/terms" className="hover:text-anime-purple">Terms of Service</Link></li>
-                <li><Link to="/privacy" className="hover:text-anime-purple">Privacy Policy</Link></li>
-                <li><Link to="/cookies" className="hover:text-anime-purple">Cookie Policy</Link></li>
+                {allGenres.slice(0, 4).map((genre, index) => (
+                  <li key={index}>
+                    <Link to={`/genre/${genre.toLowerCase()}`} className="hover:text-anime-purple">
+                      {genre}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
