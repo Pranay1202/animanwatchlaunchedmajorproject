@@ -42,7 +42,7 @@ const Navbar = () => {
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2">
             <span className="text-2xl font-bold bg-gradient-to-r from-anime-purple to-anime-pink text-transparent bg-clip-text">
-              AniManGa Watch
+              AniMan Watch
             </span>
           </Link>
           

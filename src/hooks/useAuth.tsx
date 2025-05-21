@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { toast } from "@/components/ui/use-toast";
 
@@ -116,7 +115,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       toast({
         title: "Registration successful",
-        description: `Welcome to AniManga Watch, ${safeUser.name || safeUser.email}!`,
+        description: `Welcome to AniMan Watch, ${safeUser.name || safeUser.email}!`,
       });
     } catch (error) {
       toast({

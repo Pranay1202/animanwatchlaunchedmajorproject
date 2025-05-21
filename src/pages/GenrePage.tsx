@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import AnimeCard from "@/components/AnimeCard";
@@ -56,7 +55,7 @@ const GenrePage = () => {
       
       <footer className="bg-anime-darkblue text-gray-300 py-8">
         <div className="container text-center">
-          <p>&copy; {new Date().getFullYear()} AniManga Watch. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} AniMan Watch. All rights reserved.</p>
         </div>
       </footer>
     </div>

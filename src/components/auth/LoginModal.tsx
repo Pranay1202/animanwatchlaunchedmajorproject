@@ -128,7 +128,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, setIsOpen }) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Welcome to AniManga Watch</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-center">Welcome to AniMan Watch</DialogTitle>
           <DialogDescription className="text-center">
             Log in to track your favorite anime and join the community!
           </DialogDescription>
