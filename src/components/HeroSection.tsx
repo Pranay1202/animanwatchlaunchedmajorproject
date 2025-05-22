@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 interface HeroAnime {
   id: number;
@@ -64,12 +65,16 @@ const HeroSection = () => {
           </p>
           
           <div className="mt-8 flex space-x-4">
-            <Button size="lg" className="bg-anime-purple hover:bg-anime-darkpurple">
-              Watch Now
-            </Button>
-            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/20">
-              Add to List
-            </Button>
+            <Link to={`/anime/${currentHero.id}`}>
+              <Button size="lg" className="bg-anime-purple hover:bg-anime-darkpurple">
+                Watch Now
+              </Button>
+            </Link>
+            <Link to="/watchlist">
+              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/20">
+                Add to List
+              </Button>
+            </Link>
           </div>
         </div>
         
